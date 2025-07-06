@@ -8,6 +8,7 @@ import com.example.School_Management.repository.ParentRepository;
 import com.example.School_Management.transformer.ParentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +34,14 @@ public class ParentService {
         return parentRepository.findById(id)
                 .map(parentTransformer::convertEntityToDto);
     }
-
+    @Transactional
     public ParentDto save(ParentDto parentDto) {
 
         Parent parent = parentTransformer.convertDtoToEntity(parentDto);
         Parent savedParent = parentRepository.save(parent);
         return parentTransformer.convertEntityToDto(savedParent);
     }
-
+    @Transactional
     public ParentDto update(long id, ParentDto parentDto) {
         Optional<Parent> existingParent = parentRepository.findById(id);
         if (existingParent.isEmpty()) {
@@ -53,7 +54,7 @@ public class ParentService {
 
         return parentTransformer.convertEntityToDto(savedParent);
     }
-
+    @Transactional
     public String deleteById(long id) {
         if (!parentRepository.existsById(id)) {
             return null;

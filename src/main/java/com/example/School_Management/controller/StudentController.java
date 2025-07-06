@@ -4,6 +4,8 @@ package com.example.School_Management.controller;
 import com.example.School_Management.dto.StudentDto;
 import com.example.School_Management.service.StudentService;
 import com.example.School_Management.service.SchoolClassService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/students")
+@Tag(name = "Student", description = "Find All,Find BY Id,Save,Update ,Delete By Id,Link with class")
 public class StudentController {
 
     @Autowired
@@ -24,7 +28,8 @@ public class StudentController {
 
 
     //fetch All Students
-    @GetMapping("/students")
+    @GetMapping("")
+    @Operation(summary = "Get all students", description = "Returns a list of all students")
     public ResponseEntity<List<StudentDto>> getAllStudents() {
 
         List<StudentDto> students = studentService.getAllStudents();
@@ -38,7 +43,8 @@ public class StudentController {
     }
 
     //fetch student by id
-    @GetMapping("/students/{id}")
+    @GetMapping("/{id}")
+    @Operation(summary = "Get student By Id", description = "Returns a student by Id")
     public ResponseEntity<?> getStudentById(@PathVariable Long id)
     {
             StudentDto studentDto = studentService.getStudentById(id)
@@ -48,7 +54,8 @@ public class StudentController {
 
 
     //update student by id  ,include ids when you will use put mapping
-    @PutMapping("/students/{id}")
+    @PutMapping("/{id}")
+    @Operation(summary = "update student details", description = "Returns updated student ,ids should be present")
     public ResponseEntity<?> updateStudent(@PathVariable Long id, @RequestBody StudentDto studentDto) {
         StudentDto updatedStudentDto = studentService.updateStudent(id, studentDto);
 
@@ -60,7 +67,8 @@ public class StudentController {
     }
 
     // add,don't need to include ids when you will use post mapping
-    @PostMapping("/student")
+    @PostMapping("")
+    @Operation(summary = "Add student details with parent and Address details", description = "Returns saved student,no need to give any id")
     public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto studentDto) {
         StudentDto createdStudent = studentService.saveStudent(studentDto);
 
@@ -72,7 +80,8 @@ public class StudentController {
     }
 
     //delete
-    @DeleteMapping("/students/{id}")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "delete student", description = "delete student by id")
     public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
         Boolean deleted = studentService.deleteStudent(id);
 
@@ -83,7 +92,8 @@ public class StudentController {
     }
 
     //Link School Class with Student
-    @PutMapping("/students/{studentId}/linkClass/{classId}")
+    @PutMapping("/{studentId}/linkClass/{classId}")
+    @Operation(summary = "Add school class to a student", description = "Returns a student with linked school class")
     public ResponseEntity<?> studentLinkClass(@PathVariable Long studentId,@PathVariable Long classId )
     {
             if(studentService.existById(studentId) && schoolClassService.existById(classId))

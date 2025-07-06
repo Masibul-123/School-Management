@@ -2,6 +2,7 @@ package com.example.School_Management.dto;
 
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -11,6 +12,7 @@ import lombok.*;
 @Builder
 public class SchoolClassDto {
 
+    @Schema(description = "Unique identifier")
     private Long id;
     private String name;
 

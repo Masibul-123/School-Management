@@ -7,6 +7,7 @@ import com.example.School_Management.repository.SectionRepository;
 import com.example.School_Management.transformer.SchoolClassTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class SchoolClassService {
                 .findFirst();
 
     }
-
+    @Transactional
     public SchoolClassDto save(SchoolClassDto schoolClassDto) {
 
        SchoolClass schoolClass= schoolClassTransformer.convertDtoToEntity(schoolClassDto);
@@ -55,6 +56,7 @@ public class SchoolClassService {
 
     }
 
+    @Transactional
     public  SchoolClassDto updateSchoolClass(long id, SchoolClassDto schoolClassDto) {
 
         if( !schoolClassRepository.existsById(id)){
@@ -66,7 +68,7 @@ public class SchoolClassService {
 
         return schoolClassTransformer.convertEntityToDto(returnedClassName);
     }
-
+    @Transactional
     public  String deleteSchoolClass(Long id) {
         if(!schoolClassRepository.existsById(id))
             return null;

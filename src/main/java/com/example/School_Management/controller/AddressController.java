@@ -4,6 +4,8 @@ package com.example.School_Management.controller;
 
 import com.example.School_Management.dto.AddressDto;
 import com.example.School_Management.service.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,15 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/students/addresses")
+@Tag(name = "Address", description = "Find All,Find BY Id,Save,Update ,Delete By Id")
 public class AddressController {
 
     @Autowired
     private AddressService addressService;
 
-    @GetMapping("/students/addresses")
+    @GetMapping("")
+    @Operation(summary = "Get all Address", description = "Returns a list of all Address")
     public ResponseEntity<List<AddressDto>> findAll() {
         List<AddressDto> addresses = addressService.findAll();
         if (addresses == null || addresses.isEmpty()) {
@@ -29,7 +34,8 @@ public class AddressController {
         return ResponseEntity.ok(addresses);
     }
 
-    @GetMapping("/students/address/{id}")
+    @GetMapping("/{id}")
+    @Operation(summary = "Get all Address", description = "Returns a  Address")
     public ResponseEntity<AddressDto> findById(@PathVariable long id) {
         AddressDto addressDto = addressService.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No address found with ID: " + id));
@@ -37,7 +43,8 @@ public class AddressController {
     }
 
 
-    @PutMapping("/students/address/{id}")
+    @PutMapping("/{id}")
+    @Operation(summary = "update Address  details", description = "Returns updated Address  details ,id should be mentioned")
     public ResponseEntity<AddressDto> update(@PathVariable long id, @RequestBody AddressDto addressDto) {
         AddressDto updated = addressService.update(id, addressDto);
         if (updated == null) {
@@ -46,7 +53,8 @@ public class AddressController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/students/address/{id}")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "delete Address by id", description = "id should be mentioned")
     public ResponseEntity<String> delete(@PathVariable long id) {
         String result = addressService.deleteById(id);
         if (result == null) {

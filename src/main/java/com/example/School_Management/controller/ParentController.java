@@ -6,6 +6,8 @@ package com.example.School_Management.controller;
 
 import com.example.School_Management.dto.ParentDto;
 import com.example.School_Management.service.ParentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,15 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("/students/parents")
+@Tag(name = "Parent", description = "Find All,Find BY Id,Save,Update ,Delete By Id")
 public class ParentController {
 
     @Autowired
     private ParentService parentService;
 
-    @GetMapping("/students/parents")
+    @GetMapping("")
+    @Operation(summary = "Get all Parents", description = "Returns a list of all Parents")
     public ResponseEntity<List<ParentDto>> findAll() {
         List<ParentDto> parentDtos = parentService.findAll();
         if (parentDtos == null || parentDtos.isEmpty()) {
@@ -30,7 +35,8 @@ public class ParentController {
         return ResponseEntity.ok(parentDtos);
     }
 
-    @GetMapping("/students/parent/{id}")
+    @GetMapping("/{id}")
+    @Operation(summary = "Get all Parent", description = "Returns a  Parent")
     public ResponseEntity<ParentDto> findById(@PathVariable long id) {
         ParentDto parentDto = parentService.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No parent found with ID: " + id));
@@ -38,7 +44,8 @@ public class ParentController {
     }
 
 
-    @PutMapping("/students/parent/{id}")
+    @PutMapping("/{id}")
+    @Operation(summary = "update Parent  details", description = "Returns updated Parent  details ,id should be mentioned")
     public ResponseEntity<ParentDto> update(@PathVariable long id, @RequestBody ParentDto parentDto) {
         ParentDto updatedParent = parentService.update(id, parentDto);
         if (updatedParent == null) {
@@ -47,7 +54,8 @@ public class ParentController {
         return ResponseEntity.ok(updatedParent);
     }
 
-    @DeleteMapping("/students/parent/{id}")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "delete Parent by id", description = "id should be mentioned")
     public ResponseEntity<String> delete(@PathVariable long id) {
         String message = parentService.deleteById(id);
         if (message == null) {

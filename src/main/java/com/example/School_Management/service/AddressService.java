@@ -6,6 +6,7 @@ import com.example.School_Management.repository.AddressRepository;
 import com.example.School_Management.transformer.AddressTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +32,13 @@ public class AddressService {
         return addressRepository.findById(id)
                 .map(addressTransformer::convertEntityToDto);
     }
-
+    @Transactional
     public AddressDto save(AddressDto dto) {
         Address address = addressTransformer.convertDtoToEntity(dto);
         Address saved = addressRepository.save(address);
         return addressTransformer.convertEntityToDto(saved);
     }
-
+    @Transactional
     public AddressDto update(long id, AddressDto dto) {
         Optional<Address> existing = addressRepository.findById(id);
         if (existing.isEmpty()) {
@@ -49,7 +50,7 @@ public class AddressService {
         Address saved = addressRepository.save(updated);
         return addressTransformer.convertEntityToDto(saved);
     }
-
+    @Transactional
     public String deleteById(long id) {
         if (!addressRepository.existsById(id)) {
             return null;

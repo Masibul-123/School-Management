@@ -8,6 +8,7 @@ import com.example.School_Management.repository.StudentRepository;
 import com.example.School_Management.transformer.PaymentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class PaymentService {
                 .map(paymentTransformer::convertEntityToDto);
     }
 
+    @Transactional
     public PaymentDto save(PaymentDto dto) {
 
         Student student=studentRepository.findById(dto.getStudentDto().getId())
@@ -47,7 +49,7 @@ public class PaymentService {
        return paymentTransformer.convertEntityToDto(paymentRepository.save(payment));
 
     }
-
+    @Transactional
     public PaymentDto update(long id, PaymentDto dto) {
         if (!paymentRepository.existsById(id)) {
             return null;
@@ -58,7 +60,7 @@ public class PaymentService {
         Payment updated = paymentRepository.save(payment);
         return paymentTransformer.convertEntityToDto(updated);
     }
-
+    @Transactional
     public String deleteById(long id) {
         if (!paymentRepository.existsById(id)) {
             return null;

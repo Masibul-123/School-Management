@@ -32,6 +32,7 @@ public class StudentService {
     @Autowired
     private PaymentRepository   paymentRepository;
 
+    @Transactional
     public StudentDto studentLinkClass(Long studentId, Long classId) {
         SchoolClass schoolClass=schoolClassRepository.findById(classId)
                 .orElse(null);
@@ -59,7 +60,7 @@ public class StudentService {
                 .findFirst();
     }
 
-
+    @Transactional
     public StudentDto updateStudent(Long id, StudentDto studentDto) {
 
         if(!studentRepository.existsById(id))
@@ -72,8 +73,8 @@ public class StudentService {
         return studentTransformer.convertEntityToDto(returnedStudent);
 
     }
-
-public StudentDto saveStudent(StudentDto studentDto) {
+    @Transactional
+    public StudentDto saveStudent(StudentDto studentDto) {
     // Convert DTO to entity (incomplete references)
     Student student = studentTransformer.convertDtoToEntity(studentDto);
 
@@ -98,7 +99,7 @@ public StudentDto saveStudent(StudentDto studentDto) {
 }
 
 
-
+    @Transactional
     public Boolean deleteStudent(Long id) {
         if ( studentRepository.existsById(id)) {
             

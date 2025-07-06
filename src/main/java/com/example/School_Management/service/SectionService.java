@@ -6,6 +6,7 @@ import com.example.School_Management.repository.SectionRepository;
 import com.example.School_Management.transformer.SectionTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ public class SectionService {
         return sectionTransformer.convertEntityToDto(saved);
     }
 
+    @Transactional
     public SectionDto update(long id, SectionDto sectionDto) {
         Optional<Section> existing = sectionRepository.findById(id);
         if (existing.isEmpty()) {
@@ -49,6 +51,7 @@ public class SectionService {
         return sectionTransformer.convertEntityToDto(updated);
     }
 
+    @Transactional
     public String deleteById(long id) {
         if (!sectionRepository.existsById(id)) {
             return null;
