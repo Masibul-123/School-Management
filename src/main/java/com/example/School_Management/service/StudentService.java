@@ -6,11 +6,9 @@ import com.example.School_Management.entity.*;
 import com.example.School_Management.repository.*;
 import com.example.School_Management.transformer.StudentTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ public class StudentService {
     private PaymentRepository   paymentRepository;
 
     @Transactional
-    public StudentDto studentLinkClass(Long studentId, Long classId) {
+    public StudentDto assignStudentToClass(Long studentId, Long classId) {
         SchoolClass schoolClass=schoolClassRepository.findById(classId)
                 .orElse(null);
         Student student=studentRepository.findById(studentId)
