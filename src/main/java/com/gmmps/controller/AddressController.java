@@ -1,59 +1,41 @@
 package com.gmmps.controller;
 
-
-
 import com.gmmps.dto.AddressDto;
 import com.gmmps.service.AddressService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/students/addresses")
-@Tag(name = "Address", description = "Find All,Find BY Id,Save,Update ,Delete By Id")
+@RequestMapping("/addresses")
 public class AddressController {
 
-    @Autowired
-    private AddressService addressService;
+    private final  AddressService addressService;
+
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @GetMapping("")
-    @Operation(summary = "Get all Address", description = "Returns a list of all Address")
-    public ResponseEntity<List<AddressDto>> findAll() {
-        List<AddressDto> addresses = addressService.findAll();
+    public ResponseEntity<List<AddressDto>> getAllAddresses() {
+        List<AddressDto> addresses = addressService.getAllAddresses();
         if (addresses == null || addresses.isEmpty()) {
             throw new EntityNotFoundException("No addresses found.");
         }
         return ResponseEntity.ok(addresses);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get all Address", description = "Returns a  Address")
-    public ResponseEntity<AddressDto> findById(@PathVariable long id) {
-        AddressDto addressDto = addressService.findById(id)
+    @GetMapping("/address/{id}")
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable long id) {
+        AddressDto addressDto = addressService.getAddressById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No address found with ID: " + id));
         return ResponseEntity.ok(addressDto);
     }
 
-
-    @PutMapping("/{id}")
-    @Operation(summary = "update Address  details", description = "Returns updated Address  details ,id should be mentioned")
-    public ResponseEntity<AddressDto> update(@PathVariable long id, @RequestBody AddressDto addressDto) {
-        AddressDto updated = addressService.update(id, addressDto);
-        if (updated == null) {
-            throw new EntityNotFoundException("No address found with ID: " + id);
-        }
-        return ResponseEntity.ok(updated);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "delete Address by id", description = "id should be mentioned")
+    @DeleteMapping("/address/{id}")
     public ResponseEntity<String> delete(@PathVariable long id) {
         String result = addressService.deleteById(id);
         if (result == null) {

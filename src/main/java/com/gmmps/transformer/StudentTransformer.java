@@ -1,16 +1,12 @@
 package com.gmmps.transformer;
 
 import com.gmmps.dto.*;
-import com.gmmps.entity.Address;
-import com.gmmps.entity.Parent;
-import com.gmmps.entity.Student;
-import com.gmmps.repository.AddressRepository;
-import com.gmmps.repository.ClassInfoRepository;
-import com.gmmps.repository.ParentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gmmps.entity.*;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class StudentTransformer {
@@ -24,27 +20,14 @@ public class StudentTransformer {
                 .lastName(student.getLastName())
                 .dateOfBirth(student.getDateOfBirth())
                 .gender(student.getGender())
-                .classInfoDto(
-                        student.getClassInfo() != null
-                                ? ClassInfoDto.builder()
-                                .id(student.getClassInfo().getId())
-                                .className(student.getClassInfo().getName())
-                                .sectionDto(SectionDto.builder()
-                                        .id(student.getClassInfo().getSection().getId())
-                                        .sectionName(student.getClassInfo().getSection().getSectionName())
-                                        .build())
-                                .build()
-                                : null
-                )
-
                 .parentDto(ParentDto.builder()
                         .id(student.getParent().getId())
                         .fatherName(student.getParent().getFatherName())
                         .motherName(student.getParent().getMotherName())
                         .primaryContactNo(student.getParent().getPrimaryContactNo())
                         .secondaryContactNo(student.getParent().getSecondaryContactNo())
+                        .email(student.getParent().getEmail())
                         .build())
-
                 .addressDto(AddressDto.builder()
                         .id(student.getAddress().getId())
                         .area(student.getAddress().getArea())
@@ -54,6 +37,36 @@ public class StudentTransformer {
                         .state(student.getAddress().getState())
                         .pinCode(student.getAddress().getPinCode())
                         .build())
+                .classInfoDto(
+                        student.getClassInfo() != null
+                                ? ClassInfoDto.builder()
+                                .id(student.getClassInfo().getId())
+                                .name(student.getClassInfo().getName())
+                                .build()
+                                : null)
+                .sectionInfoDto(
+                        student.getSectionInfo() != null
+                                ? SectionInfoDto.builder()
+                                .id(student.getSectionInfo().getId())
+                                .name(student.getSectionInfo().getName())
+                                .build()
+                                : null)
+                .paymentListDto(
+                        student.getPaymentList().isEmpty()
+                                ? null
+                                : student.getPaymentList().stream()
+                                .map(payment -> PaymentDto.builder()
+                                        .id(payment.getId())
+                                        .tuitionFee(payment.getTuitionFee())
+                                        .transportFee(payment.getTransportFee())
+                                        .examFee(payment.getExamFee())
+                                        .otherFee(payment.getOtherFee())
+                                        .totalFee(payment.getTotalFee())
+                                        .paymentDate(payment.getPaymentDate())
+                                        .paidMonth(payment.getPaidMonth())
+                                        .paidYear(payment.getPaidYear())
+                                        .build())
+                                .toList())
                 .build();
 
     }
@@ -63,17 +76,12 @@ public class StudentTransformer {
 
 public Student convertDtoToEntity(StudentDto studentDto) {
 
-
-
-
     Parent.ParentBuilder parentBuilder = Parent.builder()
             .fatherName(studentDto.getParentDto().getFatherName())
             .motherName(studentDto.getParentDto().getMotherName())
             .primaryContactNo(studentDto.getParentDto().getPrimaryContactNo())
-            .secondaryContactNo(studentDto.getParentDto().getSecondaryContactNo());
-    if (studentDto.getParentDto().getId() != null)
-        parentBuilder.id(studentDto.getParentDto().getId());
-
+            .secondaryContactNo(studentDto.getParentDto().getSecondaryContactNo())
+            .email(studentDto.getParentDto().getEmail());
 
     Address.AddressBuilder addressBuilder = Address.builder()
             .area(studentDto.getAddressDto().getArea())
@@ -82,33 +90,41 @@ public Student convertDtoToEntity(StudentDto studentDto) {
             .district(studentDto.getAddressDto().getDistrict())
             .state(studentDto.getAddressDto().getState())
             .pinCode(studentDto.getAddressDto().getPinCode());
-    if (studentDto.getAddressDto().getId() != null)
-        addressBuilder.id(studentDto.getAddressDto().getId());
 
+    List<Payment> payments = (studentDto.getPaymentListDto() == null || studentDto.getPaymentListDto().isEmpty())
+            ? new ArrayList<>()
+            : studentDto.getPaymentListDto().stream()
+            .map(paymentDto -> {
+                Payment.PaymentBuilder paymentBuilder = Payment.builder()
+                        .tuitionFee(paymentDto.getTuitionFee())
+                        .transportFee(paymentDto.getTransportFee())
+                        .examFee(paymentDto.getExamFee())
+                        .otherFee(paymentDto.getOtherFee())
+                        .totalFee(paymentDto.getTotalFee())
+                        .paymentDate(new java.sql.Date(paymentDto.getPaymentDate().getTime()))
+                        .paidMonth(paymentDto.getPaidMonth())
+                        .paidYear(paymentDto.getPaidYear());
+                if (paymentDto.getId() != 0)
+                    paymentBuilder.id(paymentDto.getId());
+                return paymentBuilder.build();
+            })
+            .toList();
 
     Student.StudentBuilder studentBuilder = Student.builder()
-
             .rollNo(studentDto.getRollNo())
             .firstName(studentDto.getFirstName())
             .middleName(studentDto.getMiddleName())
             .lastName(studentDto.getLastName())
             .dateOfBirth(new Date(studentDto.getDateOfBirth().getTime()))
             .gender(studentDto.getGender())
-
-            .classInfo(null)
-
             .parent(parentBuilder.build())
-
-            .address(addressBuilder.build());
-
-    if (studentDto.getId() != null)
-        studentBuilder.id(studentDto.getId());
-
+            .address(addressBuilder.build())
+            .classInfo(null)
+            .sectionInfo(null)
+            .paymentList(payments);
 
     return studentBuilder.build();
-}
-
-
+    }
 
 }
 

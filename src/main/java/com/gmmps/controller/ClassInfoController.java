@@ -3,7 +3,6 @@ package com.gmmps.controller;
 import com.gmmps.dto.ClassInfoDto;
 import com.gmmps.service.ClassInfoService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ import java.util.List;
 public class ClassInfoController {
 
     private final ClassInfoService classInfoService;
-
     public ClassInfoController(ClassInfoService classInfoService) {
         this.classInfoService = classInfoService;
     }
@@ -37,9 +35,9 @@ public class ClassInfoController {
     }
 
     @PostMapping("/class")
-    public ResponseEntity<ClassInfoDto> addClassInfo(@RequestBody ClassInfoDto schoolClassDto) {
-        ClassInfoDto SavedSchoolClassDto = classInfoService.addClassInfo(schoolClassDto);
-        return new ResponseEntity<>(SavedSchoolClassDto, HttpStatus.CREATED);
+    public ResponseEntity<ClassInfoDto> addClassInfo(@RequestBody ClassInfoDto classInfoDto) {
+        ClassInfoDto SavedclassInfoDto = classInfoService.addClassInfo(classInfoDto);
+        return new ResponseEntity<>(SavedclassInfoDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/class/{id}")

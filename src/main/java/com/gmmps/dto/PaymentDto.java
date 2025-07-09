@@ -19,6 +19,4 @@ public class PaymentDto {
     private Date paymentDate;
     private Integer paidMonth;
     private Integer paidYear;
-    private StudentDto studentDto;
-
 }

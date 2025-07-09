@@ -1,13 +1,11 @@
 package com.gmmps.service;
 
-import com.gmmps.dto.SectionDto;
-import com.gmmps.entity.Section;
-import com.gmmps.repository.SectionRepository;
+import com.gmmps.dto.SectionInfoDto;
+import com.gmmps.entity.SectionInfo;
+import com.gmmps.repository.SectionInfoRepository;
 import com.gmmps.transformer.SectionTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,49 +13,48 @@ import java.util.stream.Collectors;
 @Service
 public class SectionService {
 
-    @Autowired
-    private SectionRepository sectionRepository;
+    private final SectionInfoRepository sectionInfoRepository;
+    private final  SectionTransformer sectionTransformer;
 
-    @Autowired
-    private SectionTransformer sectionTransformer;
+    public SectionService(SectionInfoRepository sectionInfoRepository, SectionTransformer sectionTransformer) {
+        this.sectionInfoRepository = sectionInfoRepository;
+        this.sectionTransformer = sectionTransformer;
+    }
 
-    public List<SectionDto> findAll() {
-        return sectionRepository.findAll()
+    public List<SectionInfoDto> getAllSections() {
+        return sectionInfoRepository.findAll()
                 .stream()
                 .map(sectionTransformer::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<SectionDto> findById(long id) {
-        return sectionRepository.findById(id)
+    public Optional<SectionInfoDto> getSectionById(long id) {
+        return sectionInfoRepository.findById(id)
                 .map(sectionTransformer::convertEntityToDto);
     }
 
-    public SectionDto save(SectionDto sectionDto) {
-        Section section = sectionTransformer.convertDtoToEntity(sectionDto);
-        Section saved = sectionRepository.save(section);
-        return sectionTransformer.convertEntityToDto(saved);
+    public SectionInfoDto addSection(SectionInfoDto sectionInfoDto) {
+        SectionInfo updatedSectionInfo = sectionTransformer.convertDtoToEntity(sectionInfoDto);
+        SectionInfo returnedSectionInfo = sectionInfoRepository.save(updatedSectionInfo);
+        return sectionTransformer.convertEntityToDto(returnedSectionInfo);
     }
 
     @Transactional
-    public SectionDto update(long id, SectionDto sectionDto) {
-        Optional<Section> existing = sectionRepository.findById(id);
-        if (existing.isEmpty()) {
+    public SectionInfoDto updateSectionInfo(long sectionId, SectionInfoDto sectionInfoDto) {
+        Optional<SectionInfo> existing = sectionInfoRepository.findById(sectionId);
+        if (existing.isEmpty())
             return null;
-        }
-
-        Section section = sectionTransformer.convertDtoToEntity(sectionDto);
-        Section updated = sectionRepository.save(section);
-        return sectionTransformer.convertEntityToDto(updated);
+        SectionInfo updatedSectionInfo = sectionTransformer.convertDtoToEntity(sectionInfoDto);
+        updatedSectionInfo.setId(sectionId);
+        SectionInfo returnedSectionInfo = sectionInfoRepository.save(updatedSectionInfo);
+        return sectionTransformer.convertEntityToDto(returnedSectionInfo);
     }
 
     @Transactional
-    public String deleteById(long id) {
-        if (!sectionRepository.existsById(id)) {
+    public String deleteSection(long sectionId) {
+        if (!sectionInfoRepository.existsById(sectionId))
             return null;
-        }
-
-        sectionRepository.deleteById(id);
-        return "Section with ID " + id + " deleted successfully.";
+        sectionInfoRepository.deleteById(sectionId);
+        return "Section with ID " + sectionId + " deleted successfully.";
     }
 }

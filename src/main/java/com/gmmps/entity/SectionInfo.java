@@ -10,13 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Section")
-public class Section {
+public class SectionInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "section_name",nullable = false)
-    private String sectionName;
+    private String name;
 
 }

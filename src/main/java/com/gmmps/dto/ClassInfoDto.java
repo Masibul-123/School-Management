@@ -12,7 +12,5 @@ public class ClassInfoDto {
 
     @Schema(description = "Unique identifier")
     private Long id;
-    private String className;
-    private SectionDto sectionDto;
-
+    private String name;
 }

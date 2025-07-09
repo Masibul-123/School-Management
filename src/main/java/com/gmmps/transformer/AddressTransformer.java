@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 public class AddressTransformer {
 
     public AddressDto convertEntityToDto(Address address) {
-
         return AddressDto.builder()
                 .id(address.getId())
                 .area(address.getArea())
@@ -19,8 +18,6 @@ public class AddressTransformer {
                 .pinCode(address.getPinCode())
                 .build();
     }
-
-
     public Address convertDtoToEntity(AddressDto addressdto) {
         return Address.builder()
                 .area(addressdto.getArea())

@@ -6,9 +6,9 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SectionDto {
+public class SectionInfoDto {
 
     private Long id;
-    private String sectionName;
+    private String name;
 
 }

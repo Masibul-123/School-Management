@@ -1,33 +1,22 @@
 package com.gmmps.transformer;
 
-// SectionTransformer.java
-
-import com.gmmps.dto.SectionDto;
-import com.gmmps.entity.Section;
-import com.gmmps.repository.ClassInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gmmps.dto.SectionInfoDto;
+import com.gmmps.entity.SectionInfo;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SectionTransformer {
 
-
-    @Autowired
-    private ClassInfoRepository classNameRepository;
-
-    public SectionDto convertEntityToDto(Section section) {
-        return SectionDto.builder()
-                .id(section.getId())
-                .sectionName(section.getSectionName())
+    public SectionInfoDto convertEntityToDto(SectionInfo sectionInfo) {
+        return SectionInfoDto.builder()
+                .id(sectionInfo.getId())
+                .name(sectionInfo.getName())
                 .build();
     }
-
-    public Section convertDtoToEntity(SectionDto sectionDto) {
-        Section.SectionBuilder sectionBuilder=Section.builder().sectionName(sectionDto.getSectionName());
-        if(sectionDto.getId()!=null) {
-            sectionBuilder.id(sectionDto.getId());
-        }
-        return sectionBuilder.build();
+    public SectionInfo convertDtoToEntity(SectionInfoDto sectionInfoDto) {
+       return SectionInfo.builder()
+               .name(sectionInfoDto.getName())
+               .build();
     }
 
 }

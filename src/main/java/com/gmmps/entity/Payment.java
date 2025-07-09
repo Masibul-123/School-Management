@@ -2,7 +2,6 @@ package com.gmmps.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.sql.Date;
 
 
@@ -13,7 +12,6 @@ import java.sql.Date;
 @Setter
 @Builder
 public class Payment {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,8 +41,4 @@ public class Payment {
     @Column(name = "Paid_Year")
     private Integer paidYear;
 
-
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "Student_Id")
-    private Student student;
 }

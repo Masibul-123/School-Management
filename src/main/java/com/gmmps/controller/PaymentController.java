@@ -2,64 +2,60 @@ package com.gmmps.controller;
 
 import com.gmmps.dto.PaymentDto;
 import com.gmmps.service.PaymentService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/students/payments")
-@Tag(name = "Payment", description = "Find All,Find BY Id,Save,Update ,Delete By Id")
+@RequestMapping("/payments")
 public class PaymentController {
 
-    @Autowired
-    private PaymentService paymentService;
+
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
 
     @GetMapping("")
-    @Operation(summary = "Get all payments", description = "Returns a list of all payments with student details ")
-    public ResponseEntity<List<PaymentDto>> findAll() {
-        List<PaymentDto> payments = paymentService.findAll();
-        if (payments.isEmpty()) {
+    public ResponseEntity<List<PaymentDto>> getAllPayments() {
+        List<PaymentDto> payments = paymentService.getAllPayments();
+        if (payments.isEmpty())
             throw new EntityNotFoundException("No payment records found.");
-        }
         return ResponseEntity.ok(payments);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get payments by id", description = "Returns a payments with student details ")
-    public ResponseEntity<PaymentDto> findById(@PathVariable long id) {
-        PaymentDto dto = paymentService.findById(id)
+    @GetMapping("/payment/{id}")
+    public ResponseEntity<PaymentDto> getPaymentById(@PathVariable long id) {
+        PaymentDto dto = paymentService.getPaymentById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No payment found with ID: " + id));
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("")
-    @Operation(summary = "Add payment details", description = "Returns a payment with student details ,student id should be mentioned not payment id")
-    public ResponseEntity<PaymentDto> save(@RequestBody PaymentDto dto) {
-        PaymentDto saved = paymentService.save(dto);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    @PostMapping("/payment/{studentId}")
+    public ResponseEntity<PaymentDto> addNewPaymentAndLinkWithStudent(@PathVariable Long  studentId,@RequestBody PaymentDto paymentDto) {
+        PaymentDto savedPayment = paymentService.addNewPaymentAndLinkWithStudent(studentId,paymentDto);
+        if(savedPayment ==null)
+            throw new EntityNotFoundException("No Student found with this ID: " + studentId);
+        return new ResponseEntity<>(savedPayment, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "update payment details", description = "Returns a payment with student details,payment id and student id should be mentioned ")
-    public ResponseEntity<PaymentDto> update(@PathVariable long id, @RequestBody PaymentDto dto) {
-        PaymentDto updated = paymentService.update(id, dto);
+    @PutMapping("/payment/{paymentId}")
+    public ResponseEntity<PaymentDto> updatePaymentDetails(@PathVariable long paymentId, @RequestBody PaymentDto paymentDto) {
+        PaymentDto updated = paymentService.updatePaymentDetails(paymentId, paymentDto);
         if (updated == null) {
-            throw new EntityNotFoundException("No payment found with ID: " + id);
+            throw new EntityNotFoundException("No payment found with ID: " + paymentId);
         }
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "delete payment details", description = "Returns a  payment with student details,payment id should be mentioned ")
-    public ResponseEntity<String> delete(@PathVariable long id) {
-        String result = paymentService.deleteById(id);
+    public ResponseEntity<String> deletePaymentDetails(@PathVariable long id) {
+        String result = paymentService.deletePaymentDetails(id);
         if (result == null) {
             throw new EntityNotFoundException("No payment found with ID: " + id);
         }

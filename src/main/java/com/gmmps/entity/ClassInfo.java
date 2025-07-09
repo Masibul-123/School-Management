@@ -16,9 +16,4 @@ public class ClassInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id")
-    private Section section;
-
 }

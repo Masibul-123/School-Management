@@ -10,7 +10,6 @@ import lombok.*;
 @Table(name = "Parents_Details")
 public class Parent {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,5 +25,9 @@ public class Parent {
 
     @Column(name = "Secondary_Contact_No")
     private long secondaryContactNo;
+
+    @Column(name = "Email_Id")
+    private String email;
+
 
 }

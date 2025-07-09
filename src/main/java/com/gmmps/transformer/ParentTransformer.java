@@ -14,6 +14,7 @@ public class ParentTransformer {
                 .motherName(parent.getMotherName())
                 .primaryContactNo(parent.getPrimaryContactNo())
                 .secondaryContactNo(parent.getSecondaryContactNo())
+                .email(parent.getEmail())
                 .build();
     }
 
@@ -23,6 +24,7 @@ public class ParentTransformer {
                 .motherName(parentDto.getMotherName())
                 .primaryContactNo(parentDto.getPrimaryContactNo())
                 .secondaryContactNo(parentDto.getSecondaryContactNo())
+                .email(parentDto.getEmail())
                 .build();
     }
 }

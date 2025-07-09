@@ -6,10 +6,9 @@ import com.gmmps.entity.Student;
 import com.gmmps.repository.PaymentRepository;
 import com.gmmps.repository.StudentRepository;
 import com.gmmps.transformer.PaymentTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,51 +16,54 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
-    @Autowired
-    private StudentRepository studentRepository;
+    private final PaymentRepository paymentRepository;
+    private final StudentRepository studentRepository;
+    private final PaymentTransformer paymentTransformer;
 
-    @Autowired
-    private PaymentTransformer paymentTransformer;
+    public PaymentService(PaymentRepository paymentRepository, StudentRepository studentRepository, PaymentTransformer paymentTransformer) {
+        this.paymentRepository = paymentRepository;
+        this.studentRepository = studentRepository;
+        this.paymentTransformer = paymentTransformer;
+    }
 
-    public List<PaymentDto> findAll() {
+    public List<PaymentDto> getAllPayments() {
         return paymentRepository.findAll()
                 .stream()
                 .map(paymentTransformer::convertEntityToDto)
                 .collect(Collectors.toList());
     }
 
-    public Optional<PaymentDto> findById(long id) {
+    public Optional<PaymentDto> getPaymentById(long id) {
         return paymentRepository.findById(id)
                 .map(paymentTransformer::convertEntityToDto);
     }
 
     @Transactional
-    public PaymentDto save(PaymentDto dto) {
-
-        Student student=studentRepository.findById(dto.getStudentDto().getId())
-                .orElse(null);
-
-        Payment payment= paymentTransformer.convertDtoToEntity(dto);
-        payment.setStudent(student);
-
-       return paymentTransformer.convertEntityToDto(paymentRepository.save(payment));
-
+    public PaymentDto addNewPaymentAndLinkWithStudent(Long studentId, PaymentDto paymentDto) {
+        if (!studentRepository.existsById(studentId))
+            return null;
+        Student student = studentRepository.findById(studentId).get();
+        Payment payment = paymentTransformer.convertDtoToEntity(paymentDto);
+        if (student.getPaymentList() == null) {
+            student.setPaymentList(new ArrayList<>());
+        }
+        Payment savedPayment = paymentRepository.save(payment);
+        student.getPaymentList().add(savedPayment);
+        return paymentTransformer.convertEntityToDto(savedPayment);
     }
+
     @Transactional
-    public PaymentDto update(long id, PaymentDto dto) {
-        if (!paymentRepository.existsById(id)) {
+    public PaymentDto updatePaymentDetails(long paymentId, PaymentDto paymentDto) {
+        if (!paymentRepository.existsById(paymentId)) {
             return null;
         }
-
-        Payment payment = paymentTransformer.convertDtoToEntity(dto);
-        payment.setId(id);
-        Payment updated = paymentRepository.save(payment);
-        return paymentTransformer.convertEntityToDto(updated);
+        Payment updatedPayment = paymentTransformer.convertDtoToEntity(paymentDto);
+        updatedPayment.setId(paymentId);
+        Payment  returnedPayment= paymentRepository.save(updatedPayment);
+        return paymentTransformer.convertEntityToDto(returnedPayment);
     }
     @Transactional
-    public String deleteById(long id) {
+    public String deletePaymentDetails(long id) {
         if (!paymentRepository.existsById(id)) {
             return null;
         }

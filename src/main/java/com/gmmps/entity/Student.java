@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -11,7 +12,7 @@ import java.sql.Date;
 @Getter@Setter
 @Builder
 @Table(name = "STUDENTS",
-uniqueConstraints = @UniqueConstraint(columnNames = {"Roll_No", "class_info_id"}))
+uniqueConstraints = @UniqueConstraint(columnNames = {"Roll_No", "Class_info_id","Section_info_id"}))
 public class Student {
 
     @Id
@@ -45,7 +46,15 @@ public class Student {
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "class_info_id")
+    @JoinColumn(name = "Class_info_id")
     private ClassInfo classInfo;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "Section_info_id")
+    private SectionInfo sectionInfo;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "Student_Id")
+    private List<Payment> paymentList;
 
 }

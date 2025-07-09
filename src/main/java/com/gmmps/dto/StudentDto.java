@@ -3,8 +3,8 @@ package com.gmmps.dto;
 
 
 import lombok.*;
-
 import java.util.Date;
+import java.util.List;
 
 @Getter@Setter
 @AllArgsConstructor
@@ -19,11 +19,10 @@ public class StudentDto {
     private String lastName;
     private Date dateOfBirth;
     private String gender;
-
-
-    private ClassInfoDto classInfoDto;     // Refers to ClassName entity
-    private ParentDto parentDto;   // Refers to Parent entity
-    private AddressDto addressDto;   // Refers to Address entity
-
+    private ParentDto parentDto;
+    private AddressDto addressDto;
+    private ClassInfoDto classInfoDto;
+    private SectionInfoDto sectionInfoDto;
+    private List<PaymentDto> paymentListDto;
 
 }

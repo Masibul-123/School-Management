@@ -1,6 +1,5 @@
 package com.gmmps.controller;
 
-
 import com.gmmps.dto.StudentDto;
 import com.gmmps.service.StudentService;
 import com.gmmps.service.ClassInfoService;
@@ -8,7 +7,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -30,9 +28,8 @@ public class StudentController {
     @GetMapping("")
     public ResponseEntity<List<StudentDto>> getAllStudents() {
         List<StudentDto> students = studentService.getAllStudents();
-        if (students == null || students.isEmpty()) {
+        if (students == null || students.isEmpty())
             throw new EntityNotFoundException("No student found in the database.");
-        }
         return ResponseEntity.ok(students);
     }
 
@@ -70,10 +67,9 @@ public class StudentController {
      */
     @PostMapping("/student")
     public ResponseEntity<StudentDto> createStudent(@RequestBody StudentDto studentDto) {
-        StudentDto createdStudent = studentService.saveStudent(studentDto);
-        if (createdStudent == null) {
-            throw new NullPointerException("Failed to create student."); // or a custom exception
-        }
+        StudentDto createdStudent = studentService.createStudent(studentDto);
+        if (createdStudent == null)
+            throw new NullPointerException("Failed to create student.");
         return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
     }
 
@@ -98,12 +94,12 @@ public class StudentController {
      * @param classId the ID of the class
      * @return {@link ResponseEntity<?>}
      */
-    @PutMapping("/student/{studentId}/class/{classId}")
-    public ResponseEntity<?> assignStudentToClass(@PathVariable Long studentId,@PathVariable Long classId ) {
-        if(studentService.existById(studentId) && classInfoService.existById(classId)) {
+    @PutMapping("/student/{studentId}/class/{classId}/section/{sectionId}")
+    public ResponseEntity<?> assignStudentToClassAndSection(@PathVariable Long studentId,@PathVariable Long classId,@PathVariable Long sectionId ) {
+        if(studentService.studentExistById(studentId) && classInfoService.classExistById(classId) && classInfoService.classExistById(sectionId)) {
             StudentDto studentDto = studentService.getStudentById(studentId)
                         .orElseThrow(()->new NullPointerException("No student/class found with ID: " ));
-            return ResponseEntity.ok(studentService.assignStudentToClass(studentId,classId));
+            return ResponseEntity.ok(studentService.assignStudentToClassAndSection(studentId,classId,sectionId));
         } else {
             throw new NullPointerException("No student/class found with ID: ");
         }
